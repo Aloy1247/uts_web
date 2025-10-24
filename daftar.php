@@ -21,12 +21,16 @@
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 max-width: 600px;
                 width: 100%;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
             }
             h1{
                 text-align: center;
                 color: #333;
                 margin-bottom: 30px;
                 font-size: 28px;
+                flex-shrink: 0;
             }
             .success-message{
                 background-color: #d4edda;
@@ -37,22 +41,34 @@
                 border-radius: 5px;
                 text-align: center;
                 font-weight: bold;
+                flex-shrink: 0;
+            }
+            .table-container {
+                overflow-y: auto;
+                margin-bottom: 20px;
             }
             table{
                 width: 100%;
                 border-collapse: collapse;
-                margin-bottom: 20px;
+            }
+            thead {
+                position: sticky;
+                top: 0;
+                background-color: #f8f9fa;
+                z-index: 1;
             }
             th, td{
                 padding: 12px;
                 text-align: left;
-                border-bottom: 1px solid #ddd;
+                border: 1px solid #ddd;
             }
             th{
                 background-color: #f8f9fa;
                 font-weight: bold;
                 color: #333;
-                width: 30%;
+            }
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
             }
             td{
                 color: #666;
@@ -79,15 +95,56 @@
         <div class="container">
             <h1>Data Registrasi User</h1>
             
-            <?php if (isset($_POST['submit'])): ?>
+            <?php if (isset($_POST['submit'])): 
+                $umur = intval($_POST['umur']);
+                if ($umur < 10):
+            ?>
+                <div style="text-align: center; color: #dc3545; padding: 20px;">
+                    <h3>Error: Umur tidak valid</h3>
+                    <p>Umur minimal harus 10 tahun.</p>
+                    <div class="back-button">
+                        <a href="index.html">Kembali ke Form Registrasi</a>
+                    </div>
+                </div>
+            <?php else: ?>
                 <div class="success-message">
                     Registrasi Berhasil!
                 </div>
-                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Lengkap</th>
+                                <th>Umur</th>
+                                <th>Asal Kota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                    $namaLengkap = htmlspecialchars($_POST['namadepan'] . ' ' . $_POST['namabelakang']);
+                    for ($i = 1; $i <= $umur; $i++) {
+                        if ($i % 2 !== 0 || $i === 4 || $i === 8) {
+                            continue;
+                        }
+                        echo "<tr>";
+                        echo "<td>" . $i . "</td>";
+                        echo "<td>" . $namaLengkap . "</td>";
+                        echo "<td>" . htmlspecialchars($_POST['umur']) . " tahun</td>";
+                        echo "<td>" . htmlspecialchars($_POST['asalkota']) . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                        </tbody>
+                    </table>
+                </div>
                 <div class="back-button">
                     <a href="index.html">Kembali ke Form Registrasi</a>
                 </div>
-            <?php else: ?>
+            <?php 
+                endif;
+            else: 
+            ?>
                 <div style="text-align: center; color: #dc3545; padding: 20px;">
                     <h3>Error: Data tidak ditemukan</h3>
                     <p>Silakan isi form registrasi terlebih dahulu.</p>
